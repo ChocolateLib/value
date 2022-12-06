@@ -1,9 +1,9 @@
 {
   "name": "@chocolatelib/value",
   "version": "0.0.3",
-  "main": "dist/cjs.js",
-  "module": "dist/esm.js",
-  "types": "dist/types.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "files": [
     "dist"
