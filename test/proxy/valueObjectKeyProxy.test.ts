@@ -33,6 +33,14 @@ describe('Object Key Proxy Value', function () {
             key.set = 1;
             expect(value.get).toEqual({ test: 1 });
         });
+        it('Original value object has event', function (done) {
+            let value = new Value({});
+            value.addListener(() => {
+                done();
+            });
+            let key = new ValueObjectKeyProxy<number, { test: number } | {}>('test', value);
+            key.set = 1;
+        });
     });
 
     describe('Listeners', function () {

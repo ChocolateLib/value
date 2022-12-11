@@ -17,6 +17,7 @@ export class ValueObjectKeyProxy<KeyType, ObjectType extends object> extends Val
         }
     }
 
+    /**Changes the proxy object*/
     set proxy(proxy: Value<ObjectType>) {
         if (this.___listener) {
             if (this.___proxy) {
@@ -34,17 +35,13 @@ export class ValueObjectKeyProxy<KeyType, ObjectType extends object> extends Val
         super.addListener(func, run);
         if (!this.___listener && this.___proxy) {
             this.___listener = this.___proxy.addListener((val) => {
-                if (typeof val === 'object') {
-                    //@ts-expect-error
-                    super.set = val[this.___key];
-                }
+                //@ts-expect-error
+                super.set = val[this.___key];
             });
         }
         return func;
     }
 
-    /**Removes function from proxy
-     * @param func */
     removeListener(func: Listener<KeyType | undefined>) {
         super.removeListener(func);
         if (!this.inUse && this.___listener && this.___proxy) {
@@ -54,43 +51,36 @@ export class ValueObjectKeyProxy<KeyType, ObjectType extends object> extends Val
         return func;
     }
 
-    /*This gets the value of the key*/
     get get(): KeyType | Promise<KeyType | undefined> | undefined {
         if (this.___proxy) {
             let val = this.___proxy.get;
             if (val instanceof Promise) {
                 return val.then((val) => {
-                    if (typeof val === 'object') {
-                        //@ts-expect-error
-                        return val[this.___key];
-                    }
+                    //@ts-expect-error
+                    return val[this.___key];
                 });
-            } else if (typeof val === 'object') {
+            } else {
                 //@ts-expect-error
                 return val[this.___key];
             }
         }
     }
 
-    /*This sets the value of the key*/
     set set(val: KeyType | undefined) {
         if (this.___proxy) {
             let buff = this.___proxy.get;
             if (buff instanceof Promise) {
                 buff.then((buff) => {
-                    if (typeof buff === 'object') {
-                        //@ts-expect-error
-                        buff[this.___key] = val;
-                        //@ts-expect-error
-                        this.___proxy.set = buff;
-                    }
-                });
-            } else {
-                if (typeof buff === 'object') {
                     //@ts-expect-error
                     buff[this.___key] = val;
-                    this.___proxy.set = buff;
-                }
+                    //@ts-expect-error
+                    this.___proxy.___update();
+                });
+            } else {
+                //@ts-expect-error
+                buff[this.___key] = val;
+                //@ts-expect-error
+                this.___proxy.___update();
             }
         }
     }
