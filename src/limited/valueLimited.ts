@@ -1,4 +1,4 @@
-import { Value } from "./value";
+import { Value } from "../value";
 
 /**Function to limit setting the value of a Value
  * if the function returns undefined the value is not changed*/

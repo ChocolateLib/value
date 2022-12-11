@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { ValueLimited } from "../src/index";
+import { ValueLimited } from "../../src/index";
 
 describe('Limited Value', function () {
     describe('Initial valueLimiter should not limit initial value', function () {
