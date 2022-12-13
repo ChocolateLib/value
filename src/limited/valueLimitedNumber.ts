@@ -1,7 +1,7 @@
-import { Value } from "../value";
+import { Limiter, ValueLimited } from "./valueLimited";
 
 /**Extension of Value class to allow a limited number*/
-export class ValueLimitedNumber extends Value<number> {
+export class ValueLimitedNumber extends ValueLimited<number> {
     private _min: number;
     private _max: number;
     private _step: number | undefined;
@@ -12,26 +12,13 @@ export class ValueLimitedNumber extends Value<number> {
      * @param min minimum allowed value
      * @param max maximum allowed value
      * @param step step increment value must fall on eg 2 allows increments of 2 so 0,2,4,6 etc.*/
-    constructor(init: number, min: number = -Infinity, max: number = Infinity, step?: number) {
-        super(init);
+    constructor(init: number, min: number = -Infinity, max: number = Infinity, step?: number, limiters?: Limiter<number>[]) {
+        super(init, limiters);
         this._min = min;
         this._max = max;
         if (step) {
             this._step = step;
             this.halfStep = step / 2;
-        }
-    }
-
-    /** This sets the value and dispatches an event*/
-    set set(val: number) {
-        if (this._step) {
-            let mod = val % this._step;
-            val = (mod > this.halfStep ? val + (this._step - mod) : val - mod);
-        }
-        val = Math.min(this._max, Math.max(this._min, val));
-        if (this.___value !== val) {
-            this.___value = val;
-            this.___update();
         }
     }
 
@@ -76,13 +63,26 @@ export class ValueLimitedNumber extends Value<number> {
             this.halfStep = step / 2;
             let mod = this.___value % this._step;
             let val = (mod > this.halfStep ? this.___value + (this._step - mod) : this.___value - mod);
-            if (this.___value !== val) {
+            if (val !== this.___value) {
                 this.___value = val;
                 this.___update();
             }
         } else {
             delete this._step;
             this.halfStep = 0;
+        }
+    }
+
+    /** This sets the value and dispatches an event*/
+    set set(val: number) {
+        if (this._step) {
+            let mod = val % this._step;
+            val = (mod > this.halfStep ? val + (this._step - mod) : val - mod);
+        }
+        val = Math.min(this._max, Math.max(this._min, val));
+        if (val !== this.___value && this.checkLimit(val)) {
+            this.___value = val;
+            this.___update();
         }
     }
 }
