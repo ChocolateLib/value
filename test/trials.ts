@@ -1,9 +1,4 @@
-import { Value, ValueObjectKeyProxy } from "../src";
+import { ValueLimited } from "../src";
 
-console.log('Yo');
-let value = new Value({});
-value.addListener(() => {
-    console.log('Yo');
-});
-let key = new ValueObjectKeyProxy<number, { test: number } | {}>('test', value);
-key.set = 1;
+let value = new ValueLimited(1, [{ func(val) { return val !== 10 }, reason: 'Not valid' }]);
+value.set = 10;

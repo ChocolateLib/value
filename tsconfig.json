@@ -13,6 +13,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "Node",
   },
   "ts-node": {
     "transpileOnly": true,
