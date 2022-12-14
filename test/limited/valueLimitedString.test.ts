@@ -10,83 +10,54 @@ describe('Limited Number Value', function () {
 
     describe('Limiting', function () {
         it('Max length is accessible', function () {
-            expect((new ValueLimitedString('asdf', 10)).maxLength).toStrictEqual(10);
+            expect((new ValueLimitedString('asdf', undefined, 10)).maxLength).toStrictEqual(10);
         });
         it('Max byte length is accessible', function () {
-            expect((new ValueLimitedString('asdf', undefined, 22)).maxByteLength).toStrictEqual(22);
+            expect((new ValueLimitedString('asdf', undefined, undefined, 22)).maxByteLength).toStrictEqual(22);
         });
         it('Allowed list is accessible', function () {
-            expect((new ValueLimitedString('asdf', undefined, undefined, ['test1', 'test2'])).allowed).toBe(['test1', 'test2']);
+            expect((new ValueLimitedString('asdf', { test1: {}, test2: {} })).enums).toStrictEqual({ test1: {}, test2: {} });
         });
     })
 
 
-    // describe('Limiting', function () {
-    //     it('None limited number', function () {
-    //         let value = new ValueLimitedString(5);
-    //         expect(value.get).toStrictEqual(5);
-    //         value.set = 100;
-    //         expect(value.get).toStrictEqual(100);
-    //         value.set = -100;
-    //         expect(value.get).toStrictEqual(-100);
-    //     });
-    //     it('Limiter to numbers between 2 and 8', function () {
-    //         let value = new ValueLimitedString(5, 2, 8);
-    //         expect(value.get).toStrictEqual(5);
-    //         value.set = 10;
-    //         expect(value.get).toStrictEqual(8);
-    //         value.set = 0;
-    //         expect(value.get).toStrictEqual(2);
-    //     });
-    //     it('Limiter to steps of 3', function () {
-    //         let value = new ValueLimitedString(5, undefined, undefined, 3);
-    //         expect(value.get).toStrictEqual(5);
-    //         value.set = 10;
-    //         expect(value.get).toStrictEqual(9);
-    //         value.set = 0;
-    //         expect(value.get).toStrictEqual(0);
-    //     });
-    //     it('Limiter to steps of 3 and between 5 and 44', function () {
-    //         let value = new ValueLimitedString(5, 5, 44, 3);
-    //         expect(value.get).toStrictEqual(5);
-    //         value.set = 2;
-    //         expect(value.get).toStrictEqual(5);
-    //         value.set = 40;
-    //         expect(value.get).toStrictEqual(39);
-    //     });
-    // });
+    describe('Limiting length', function () {
+        it('Limiting length to 10', function () {
+            let value = new ValueLimitedString('asdf', undefined, 10);
+            value.set = '123456789011';
+            expect(value.get).toStrictEqual('1234567890');
+            value.set = 'æøæøæøæøæøæø';
+            expect(value.get).toStrictEqual('æøæøæøæøæø');
+        });
+        it('Limiting length to 10 bytes', function () {
+            let value = new ValueLimitedString('asdf', undefined, undefined, 10);
+            value.set = 'æøæøæøæøæøæø';
+            expect(value.get).toStrictEqual('æøæøæ');
+        });
+    });
 
-    // describe('Change limits', function () {
-    //     it('Minimum is changed', function () {
-    //         let value = new ValueLimitedString(20, 5, 600, 3);
-    //         expect(value.get).toStrictEqual(20);
-    //         value.min = 38;
-    //         expect(value.get).toStrictEqual(38);
-    //     });
-    //     it('Maximum is changed', function () {
-    //         let value = new ValueLimitedString(500, 5, 600, 3);
-    //         expect(value.get).toStrictEqual(500);
-    //         value.max = 357;
-    //         expect(value.get).toStrictEqual(357);
-    //     });
-    //     it('Step size is set', function () {
-    //         let value = new ValueLimitedString(20, 5, 600);
-    //         expect(value.get).toStrictEqual(20);
-    //         value.step = 7;
-    //         expect(value.get).toStrictEqual(21);
-    //     });
-    //     it('Step size is changed', function () {
-    //         let value = new ValueLimitedString(21, 5, 600, 7);
-    //         expect(value.get).toStrictEqual(21);
-    //         value.step = 8;
-    //         expect(value.get).toStrictEqual(24);
-    //     });
-    //     it('Step size is removed', function () {
-    //         let value = new ValueLimitedString(21, 5, 600, 7);
-    //         expect(value.get).toStrictEqual(21);
-    //         value.step = undefined;
-    //         value.set = 23;
-    //         expect(value.get).toStrictEqual(23);
-    //     });
-    // });
+    describe('Enums', function () {
+        it('Getting description', function () {
+            let value = new ValueLimitedString('test1', { test1: { description: 'Test1' }, test2: { description: 'Test2' } })
+            expect(value.enum).toStrictEqual({ description: 'Test1' });
+            value.set = 'test2';
+            expect(value.enum).toStrictEqual({ description: 'Test2' });
+        });
+        it('Changing enums with overlapping enums', function () {
+            let value = new ValueLimitedString('test1', { test1: { description: 'Test1' }, test2: { description: 'Test2' } })
+            expect(value.enum).toStrictEqual({ description: 'Test1' });
+            value.set = 'test2';
+            value.enums = { test2: { description: 'Test2' }, test3: { description: 'Test3' } }
+            value.set = 'test3';
+            expect(value.enum).toStrictEqual({ description: 'Test3' });
+        });
+        it('Changing enums with different enums', function () {
+            let value = new ValueLimitedString('test1', { test1: { description: 'Test1' }, test2: { description: 'Test2' } })
+            expect(value.enum).toStrictEqual({ description: 'Test1' });
+            value.set = 'test2';
+            value.enums = { test3: { description: 'Test3' }, test4: { description: 'Test4' } }
+            expect(value.get).toStrictEqual('test3');
+            expect(value.enum).toStrictEqual({ description: 'Test3' });
+        });
+    });
 });

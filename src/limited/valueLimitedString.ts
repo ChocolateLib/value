@@ -26,7 +26,7 @@ export class ValueLimitedString extends ValueLimited<string> {
      * @param maxLength the maximum character length of the string
      * @param maxByteLength the maximum byte length of the string
      * @param allowed list of allowed values for string*/
-    constructor(init: string, maxLength?: number, maxByteLength?: number, limiters?: Limiter<string>[], enums?: EnumList) {
+    constructor(init: string, enums?: EnumList, maxLength?: number, maxByteLength?: number, limiters?: Limiter<string>[]) {
         super(init, limiters);
         this._maxLength = maxLength;
         this._maxByteLength = maxByteLength;
@@ -52,6 +52,14 @@ export class ValueLimitedString extends ValueLimited<string> {
         } else {
             delete this.___enums;
         }
+    }
+
+    /**Returns the values enums*/
+    get enum() {
+        if (this.___enums) {
+            return this.___enums[this.___value];
+        }
+        return undefined;
     }
 
     /**Checks if value is in enum list*/
