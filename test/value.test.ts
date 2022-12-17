@@ -153,6 +153,10 @@ describe('Value', function () {
             expect(value.compare('10')).toStrictEqual(true);
             expect(value.compare('11')).toStrictEqual(true);
         });
+        it('JSON override', function () {
+            let value = new Value(10);
+            expect(JSON.stringify(value)).toStrictEqual('10');
+        });
     });
 
     class ValueTest<ValueType> extends Value<ValueType> {

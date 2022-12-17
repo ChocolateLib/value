@@ -3,13 +3,12 @@ export type Listener<ValueType> = (val: ValueType) => void
 
 /**The value class is a container for a value which can have events listeners registered*/
 export class Value<ValueType> {
-    private ___valueListeners: Listener<ValueType>[];
+    private ___valueListeners: Listener<ValueType>[] = [];
     protected ___value: ValueType;
 
     /**Constructor
      * @param init initial value of the Value*/
     constructor(init: ValueType) {
-        this.___valueListeners = [];
         this.___value = init;
     }
 
@@ -82,5 +81,10 @@ export class Value<ValueType> {
     /** Returns wether the value has a specific listeners, true means it has that listener*/
     hasListener(func: Listener<ValueType>) {
         return this.___valueListeners.indexOf(func) !== -1;
+    }
+
+    /**Returns value if stringified */
+    toJSON() {
+        return this.___value;
     }
 }

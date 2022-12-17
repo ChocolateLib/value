@@ -35,6 +35,7 @@ export class ValueLimitedNumber extends ValueLimited<number> {
             this.___value = val;
             this.___update();
         }
+        this.___updateLimiter();
     }
 
     /**Returns maximum allowed value */
@@ -50,6 +51,7 @@ export class ValueLimitedNumber extends ValueLimited<number> {
             this.___value = val;
             this.___update();
         }
+        this.___updateLimiter();
     }
 
     /**Returns step size */
@@ -71,6 +73,7 @@ export class ValueLimitedNumber extends ValueLimited<number> {
             delete this._step;
             this.halfStep = 0;
         }
+        this.___updateLimiter();
     }
 
     /** This sets the value and dispatches an event*/

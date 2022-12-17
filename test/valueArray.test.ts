@@ -90,6 +90,10 @@ describe('Array Value', function () {
         it('Comparing to same ValueArray', function () {
             expect((new ValueArray([1, 2, 3])).compare((new ValueArray([1, 2, 3])))).toBeFalsy();
         });
+        it('JSON override', function () {
+            let value = new ValueArray([1, 2, 3]);
+            expect(JSON.stringify(value)).toStrictEqual('[1,2,3]');
+        });
     });
 
     describe('Array Modifications', function () {
