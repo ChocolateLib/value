@@ -5,6 +5,8 @@ export type Listener<ValueType> = (val: ValueType) => void
 export class Value<ValueType> {
     private ___valueListeners: Listener<ValueType>[] = [];
     protected ___value: ValueType;
+    /**Stores info about value*/
+    info: { name: string, description?: string } | undefined
 
     /**Constructor
      * @param init initial value of the Value*/

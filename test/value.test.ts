@@ -157,6 +157,13 @@ describe('Value', function () {
             let value = new Value(10);
             expect(JSON.stringify(value)).toStrictEqual('10');
         });
+        it('Info about value', function () {
+            let value = new Value(10);
+            value.info = { name: 'Test' };
+            expect(value.info).toStrictEqual({ name: 'Test' });
+            value.info = { name: 'Test', description: 'TestDesc' };
+            expect(value.info).toStrictEqual({ name: 'Test', description: 'TestDesc' });
+        });
     });
 
     class ValueTest<ValueType> extends Value<ValueType> {
