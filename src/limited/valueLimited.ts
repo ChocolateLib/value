@@ -1,5 +1,8 @@
 import { Value } from "../value";
 
+/**Function to listen for value changes */
+export type LimiterListener<T> = (val: ValueLimited<T>) => void
+
 /**Limiter struct */
 export type Limiter<T> = {
     /**Limiter function, returns true to block value*/
@@ -11,6 +14,7 @@ export type Limiter<T> = {
 /**Extension of Value class to allow limiting Value value*/
 export class ValueLimited<ValueType> extends Value<ValueType> {
     private ___limiters: Limiter<ValueType>[] | undefined;
+    private ___limitersListeners: LimiterListener<ValueType>[] = [];
 
     /**Constructor
      * @param init initial value of the Value*/
@@ -19,18 +23,52 @@ export class ValueLimited<ValueType> extends Value<ValueType> {
         this.___limiters = limiters;
     }
 
+
+    /**This adds a function as an listener for changes to the limiters
+     * @param run set true to run listener with Values value instantly*/
+    addLimiterListener(func: LimiterListener<ValueType>, run?: boolean) {
+        this.___limitersListeners.push(func);
+        if (run) {
+            func(this);
+        }
+        return func;
+    }
+
+    /**This removes a function as an listener for changes to the limiters*/
+    removeLimiterListener(func: LimiterListener<ValueType>) {
+        let index = this.___limitersListeners.indexOf(func);
+        if (index != -1) {
+            this.___limitersListeners.splice(index, 1);
+        }
+        return func;
+    }
+
+    /** This sends an update without changing the value, can be used for more complex values*/
+    protected ___updateLimiter() {
+        if (this.___limitersListeners) {
+            for (let i = 0, m = this.___limitersListeners.length; i < m; i++) {
+                try {
+                    this.___limitersListeners[i](this);
+                } catch (e) {
+                    console.warn('Failed while calling value listeners ', e);
+                }
+            }
+        }
+    }
+
     /**Returns the values limiters*/
     get limiters() {
         return this.___limiters
     }
 
-    /** */
+    /**Changes the limiter structure*/
     set limiters(limiters: Limiter<ValueType>[] | undefined) {
         if (limiters) {
             this.___limiters = limiters;
         } else {
             delete this.___limiters;
         }
+        this.___updateLimiter();
     }
 
     /**Runs through limiters to check if value is allowed*/

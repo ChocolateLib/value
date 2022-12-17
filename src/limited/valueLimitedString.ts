@@ -52,6 +52,7 @@ export class ValueLimitedString extends ValueLimited<string> {
         } else {
             delete this.___enums;
         }
+        this.___updateLimiter();
     }
 
     /**Returns the values enums*/
@@ -82,6 +83,7 @@ export class ValueLimitedString extends ValueLimited<string> {
             this.___value = this.___value.slice(0, this._maxLength);
             this.___update();
         }
+        this.___updateLimiter();
     }
 
     /**Returns max byte length*/
@@ -98,6 +100,7 @@ export class ValueLimitedString extends ValueLimited<string> {
                 this.___update();
             }
         }
+        this.___updateLimiter();
     }
 
 
