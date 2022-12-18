@@ -3,6 +3,8 @@ import { Limiter, ValueLimited } from "./valueLimited";
 
 /**Entry item for enum */
 export type EnumEntry = {
+    /**Name for entry */
+    name: string,
     /**Description for entry */
     description?: string,
     /**Icon for entry */
